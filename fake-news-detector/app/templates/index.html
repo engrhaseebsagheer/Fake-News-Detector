@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Fake News Detector · Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/4426/4426507.png" />
+
+  <!-- Inline Styles -->
+  <style>
+    :root{
+      --bg: #0b0f19;           /* near-black */
+      --bg-elev: #111726;      /* elevated surfaces */
+      --card: #0f1423;         /* cards */
+      --muted: #8fa3c8;        /* subtle text */
+      --text: #e8eefc;         /* main text */
+      --primary: #3b82f6;      /* blue */
+      --primary-2: #60a5fa;    /* blue light */
+      --accent: #1f2937;       /* slate */
+      --success: #10b981;      /* green */
+      --warn: #f59e0b;         /* amber */
+      --danger: #ef4444;       /* red */
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --ring: 0 0 0 3px rgba(59,130,246,0.35);
+      --grad: radial-gradient(1200px 800px at 10% -10%, rgba(59,130,246,.12), transparent 60%),
+              radial-gradient(1200px 800px at 90% 110%, rgba(96,165,250,.10), transparent 60%),
+              linear-gradient(180deg, rgba(255,255,255,0.02), transparent 30%);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font: 16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      letter-spacing: .1px;
+      background-image: var(--grad);
+    }
+
+    .container {
+      max-width: 980px; margin: 48px auto; padding: 0 20px;
+    }
+
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; margin-bottom: 20px;
+    }
+
+    .brand {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .logo {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: conic-gradient(from 210deg, #111726, #1a2540, #0f172a);
+      box-shadow: inset 0 0 0 2px rgba(96,165,250,0.35), var(--shadow);
+      position: relative; overflow: hidden;
+    }
+    .logo::after{
+      content:""; position:absolute; inset:6px;
+      border-radius: 8px; background:
+        radial-gradient(120px 90px at 50% 0%, rgba(59,130,246,0.35), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,0.06), transparent);
+      filter: blur(.2px);
+    }
+    h1 {
+      font-size: clamp(22px, 4vw, 28px);
+      margin: 0;
+      letter-spacing: .3px;
+    }
+    .tagline {
+      color: var(--muted); font-size: 14px;
+    }
+
+    .pill {
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 6px 10px; border-radius: 999px;
+      color: #b6cffd; background: rgba(59,130,246,0.12);
+      border: 1px solid rgba(96,165,250,0.35);
+    }
+    .pill b{ color:#dbeafe; }
+
+    .grid {
+      display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px;
+    }
+    @media (max-width: 900px){ .grid{ grid-template-columns: 1fr; } }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent), var(--card);
+      border: 1px solid rgba(148,163,184,0.15);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    .card h2 {
+      margin: 0 0 10px 0; font-size: 16px; color: #dbeafe; letter-spacing: .2px;
+    }
+
+    .field { display:flex; flex-direction: column; gap:8px; margin-bottom:14px; }
+    label { color: #cfe1ff; font-size: 13px; }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 12px 14px;
+      color: var(--text); background: #0b1222;
+      border: 1px solid rgba(148,163,184,0.2);
+      border-radius: 12px;
+      outline: none; transition: box-shadow .15s, border-color .15s, transform .05s;
+    }
+    input[type="text"]:focus, textarea:focus { box-shadow: var(--ring); border-color: #60a5fa; }
+    textarea { height: 240px; resize: vertical; }
+
+    .controls { display:flex; flex-wrap: wrap; gap:10px; align-items:center; }
+    .btn {
+      appearance: none; border:0; cursor:pointer;
+      padding: 12px 16px; border-radius: 12px; font-weight: 600;
+      color: #0b1020; background: linear-gradient(180deg, #60a5fa, #3b82f6);
+      box-shadow: 0 6px 18px rgba(59,130,246,0.35);
+      transition: transform .05s ease, filter .15s ease, box-shadow .15s ease;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn.secondary {
+      color: #cfe1ff; background: #0b1222; border:1px solid rgba(96,165,250,0.35);
+      box-shadow: none;
+    }
+    .btn.ghost {
+      color: #b6cffd; background: transparent; border:1px dashed rgba(96,165,250,0.35);
+    }
+
+    .hints { color: var(--muted); font-size: 13px; display:flex; gap:14px; flex-wrap: wrap; }
+    .kbd { font-size: 12px; background: #0b1222; border:1px solid rgba(148,163,184,0.25); padding:2px 6px; border-radius: 6px; color:#cfe1ff; }
+
+    .result { display:grid; gap:12px; }
+    .alert {
+      border-radius: 12px; padding: 10px 12px; font-size: 14px;
+      background: #0b1222; border:1px solid rgba(148,163,184,0.2); color:#cfe1ff;
+    }
+    .alert.error { border-color: rgba(239,68,68,0.4); color:#fecaca; background: rgba(239,68,68,0.08); }
+    .alert.ok { border-color: rgba(16,185,129,0.5); color:#d1fae5; background: rgba(16,185,129,0.10); }
+
+    .pred {
+      display:grid; gap:10px;
+      border-radius: 14px; padding: 14px;
+      background: linear-gradient(180deg, rgba(59,130,246,0.08), transparent), #0b1222;
+      border: 1px solid rgba(96,165,250,0.25);
+    }
+    .pred .row { display:flex; align-items:center; justify-content: space-between; gap: 10px; }
+    .label {
+      font-size: 28px; font-weight: 800; letter-spacing: .3px;
+      background: linear-gradient(180deg, #dbeafe, #93c5fd);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      text-transform: capitalize;
+    }
+    .badge {
+      font-size: 12px; padding: 4px 8px; border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.25); color:#cfe1ff; background:#0b1222;
+    }
+    .stat {
+      display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;
+    }
+    .stat .item {
+      background:#0b1222; border:1px solid rgba(148,163,184,0.2);
+      border-radius: 10px; padding:10px; text-align:center;
+    }
+    .stat .item b { display:block; font-size: 18px; color:#e8eefc; }
+    .stat .item span { font-size:12px; color: var(--muted); }
+
+    .charcount { font-size:12px; color: var(--muted); margin-left:auto; }
+
+    .samples { display:flex; gap:8px; flex-wrap: wrap; }
+    .sample {
+      font-size: 12px; padding: 6px 10px; border-radius: 999px; cursor:pointer;
+      background: rgba(59,130,246,0.1); color:#cfe1ff;
+      border:1px solid rgba(96,165,250,0.35);
+    }
+
+    .loader {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid rgba(96,165,250,0.35);
+      border-top-color: var(--primary-2);
+      animation: spin 0.8s linear infinite; display: inline-block; vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    footer { margin-top: 26px; color: var(--muted); font-size: 12px; text-align: center; }
+    a { color: #93c5fd; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Credits row */
+    .credits {
+      margin-top: 10px; display:flex; gap:12px; justify-content: center; flex-wrap: wrap;
+    }
+    .credit-link {
+      display:inline-flex; align-items:center; gap:8px;
+      font-size: 12px; color:#cfe1ff; background: rgba(59,130,246,0.10);
+      border:1px solid rgba(96,165,250,0.35); padding:6px 10px; border-radius:999px;
+    }
+    .credit-link img { width:14px; height:14px; display:inline-block; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Fake News Detector</h1>
+          <div class="tagline">TF-IDF + LinearSVC · Style-based classifier · Not a fact checker</div>
+        </div>
+      </div>
+      <div class="pill" title="Uncertain threshold">
+        uncertain τ = <b>{{ tau }}</b>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- INPUT CARD -->
+      <section class="card">
+        <h2>Input</h2>
+        <div class="field">
+          <label for="title">Title (optional)</label>
+          <input id="title" type="text" placeholder="e.g., Government announces new policy" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="text" style="display:flex; gap:10px; align-items:center;">
+            Article / Paragraph
+            <span class="charcount" id="charcount">0 chars</span>
+          </label>
+          <textarea id="text" placeholder="Paste article text here…"></textarea>
+        </div>
+
+        <div class="controls">
+          <button class="btn" id="btn">
+            <span id="btnLabel">Predict</span>
+            <span id="btnSpin" class="loader" style="display:none;"></span>
+          </button>
+          <button class="btn secondary" id="btnClear" title="Clear (Esc)">Clear</button>
+          <button class="btn ghost" id="btnExample" title="Insert example (⇧⌘E)">Insert Example</button>
+          <div class="hints">
+            <span><span class="kbd">Ctrl/Cmd + Enter</span> to predict</span>
+            <span><span class="kbd">Esc</span> to clear</span>
+          </div>
+        </div>
+
+        <div class="samples" aria-label="Quick samples">
+          <span class="sample" data-type="fake">Sample: Aliens landed in Islamabad</span>
+          <span class="sample" data-type="fake2">Sample: Soda cures all diseases</span>
+          <span class="sample" data-type="real">Sample: WHO health update</span>
+        </div>
+      </section>
+
+      <!-- OUTPUT CARD -->
+      <section class="card">
+        <h2>Prediction</h2>
+        <div id="alert" class="alert" style="display:none;"></div>
+
+        <div id="pred" class="pred" style="display:none;">
+          <div class="row">
+            <div class="label" id="predLabel">—</div>
+            <div class="badge" id="predModel">Model: —</div>
+          </div>
+          <div class="stat">
+            <div class="item">
+              <b id="predScore">—</b>
+              <span>Score</span>
+            </div>
+            <div class="item">
+              <b id="predLen">—</b>
+              <span>Characters</span>
+            </div>
+            <div class="item">
+              <b id="predTau">—</b>
+              <span>Uncertain τ</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      Built for demonstration and education. This tool classifies writing style and content patterns and may be incorrect. Please verify with trusted sources.
+      <div class="credits" aria-label="Credits and links">
+        <a class="credit-link" href="https://github.com/engrhaseebsagheer/Fake-News-Detector/" target="_blank" rel="noopener">
+          <img alt="" src="https://cdn-icons-png.flaticon.com/512/733/733553.png" /> GitHub
+        </a>
+        <a class="credit-link" href="https://www.linkedin.com/in/haseeb-sagheer/" target="_blank" rel="noopener">
+          <img alt="" src="https://cdn-icons-png.flaticon.com/512/174/174857.png" /> LinkedIn
+        </a>
+        <a class="credit-link" href="https://haseebsagheer.com" target="_blank" rel="noopener">
+          <img alt="" src="https://cdn-icons-png.flaticon.com/512/545/545682.png" /> haseebsagheer.com
+        </a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Inline Script -->
+  <script>
+    const el = {
+      title: document.getElementById('title'),
+      text: document.getElementById('text'),
+      charcount: document.getElementById('charcount'),
+      btn: document.getElementById('btn'),
+      btnLabel: document.getElementById('btnLabel'),
+      btnSpin: document.getElementById('btnSpin'),
+      btnClear: document.getElementById('btnClear'),
+      btnExample: document.getElementById('btnExample'),
+      alert: document.getElementById('alert'),
+      pred: document.getElementById('pred'),
+      predLabel: document.getElementById('predLabel'),
+      predModel: document.getElementById('predModel'),
+      predScore: document.getElementById('predScore'),
+      predLen: document.getElementById('predLen'),
+      predTau: document.getElementById('predTau'),
+      samples: document.querySelectorAll('.sample')
+    };
+
+    // Live character count
+    const updateCount = () => {
+      const len = (el.title.value + ' ' + el.text.value).trim().length;
+      el.charcount.textContent = `${len} chars`;
+    };
+    el.title.addEventListener('input', updateCount);
+    el.text.addEventListener('input', updateCount);
+    updateCount();
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault(); predict();
+      }
+      if (e.key === 'Escape') {
+        e.preventDefault(); clearAll();
+      }
+      if ((e.shiftKey && e.metaKey && (e.key.toLowerCase() === 'e'))) {
+        e.preventDefault(); insertExample();
+      }
+    });
+
+    // Buttons
+    el.btn.addEventListener('click', predict);
+    el.btnClear.addEventListener('click', clearAll);
+    el.btnExample.addEventListener('click', insertExample);
+
+    // Sample chips
+    el.samples.forEach(s => s.addEventListener('click', () => {
+      const type = s.getAttribute('data-type');
+      if (type === 'fake') {
+        el.title.value = 'NASA Confirms Aliens Have Landed in Islamabad';
+        el.text.value = 'An anonymous source revealed that NASA secretly landed a UFO in Islamabad on Monday. Officials refused to comment, and witnesses claim to have seen strange lights.';
+      } else if (type === 'fake2') {
+        el.title.value = 'Coca-Cola Cures All Diseases';
+        el.text.value = 'A viral post claims that drinking cola daily can cure cancer, diabetes, and heart disease. Scientists are allegedly recommending this treatment.';
+      } else {
+        el.title.value = 'WHO Issues Routine Health Advisory';
+        el.text.value = 'The World Health Organization issued a routine public health advisory and encouraged vaccination. Local authorities will coordinate response measures.';
+      }
+      updateCount();
+    }));
+
+    function setLoading(isLoading){
+      el.btn.disabled = isLoading;
+      el.btnLabel.textContent = isLoading ? 'Predicting…' : 'Predict';
+      el.btnSpin.style.display = isLoading ? 'inline-block' : 'none';
+    }
+
+    function showAlert(msg, type='info'){
+      el.alert.style.display = 'block';
+      el.alert.className = 'alert ' + (type === 'error' ? 'error' : (type === 'ok' ? 'ok' : ''));
+      el.alert.textContent = msg;
+    }
+
+    function clearAlert(){ el.alert.style.display = 'none'; }
+
+    function showPred(data){
+      el.pred.style.display = 'grid';
+      el.predLabel.textContent = data.label || '—';
+      el.predModel.textContent = `Model: ${data.model || '—'}`;
+      el.predScore.textContent = (data.score == null) ? 'n/a' : data.score;
+      el.predLen.textContent = data.len_chars ?? '—';
+      el.predTau.textContent = data.uncertain_tau ?? '—';
+
+      // Color hint on label
+      const l = (data.label||'').toLowerCase();
+      const gradFake = 'linear-gradient(180deg, #fecaca, #fda4af)';
+      const gradReal = 'linear-gradient(180deg, #bbf7d0, #86efac)';
+      const gradUnc = 'linear-gradient(180deg, #fde68a, #facc15)';
+      el.predLabel.style.backgroundImage = l === 'fake' ? gradFake : (l === 'real' ? gradReal : gradUnc);
+      el.predLabel.style.webkitBackgroundClip = 'text';
+      el.predLabel.style.backgroundClip = 'text';
+      el.predLabel.style.color = 'transparent';
+    }
+
+    function clearPred(){
+      el.pred.style.display = 'none';
+      el.predLabel.textContent = '—';
+      el.predModel.textContent = 'Model: —';
+      el.predScore.textContent = '—';
+      el.predLen.textContent = '—';
+      el.predTau.textContent = '—';
+    }
+
+    function clearAll(){
+      el.title.value = '';
+      el.text.value = '';
+      updateCount();
+      clearAlert();
+      clearPred();
+      el.title.focus();
+    }
+
+    function insertExample(){
+      el.title.value = 'Government Announces New Budget Measures';
+      el.text.value = 'According to the finance ministry, the proposed budget includes investment in infrastructure, education, and healthcare with phased implementation over the next fiscal year.';
+      updateCount();
+    }
+
+    async function predict(){
+      clearAlert();
+      clearPred();
+
+      const title = el.title.value.trim();
+      const text = el.text.value.trim();
+      const totalLen = (title + ' ' + text).trim().length;
+
+      if (totalLen < 10) {
+        showAlert('Please provide at least 10 characters of text.', 'error');
+        return;
+      }
+      if (totalLen > 10000) {
+        showAlert('Input too long (max 10,000 characters).', 'error');
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const r = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, text })
+        });
+        const j = await r.json();
+        if (!r.ok) {
+          showAlert(j.message || r.statusText || 'Prediction failed', 'error');
+          return;
+        }
+        showPred(j);
+        showAlert('Prediction complete.', 'ok');
+      } catch (err) {
+        showAlert(`Network error: ${err}`, 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+  </script>
+</body>
+</html>

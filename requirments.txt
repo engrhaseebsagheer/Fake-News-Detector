@@ -1,0 +1,15 @@
+# Core scientific + data processing
+numpy
+pandas
+
+# Machine learning
+scikit-learn
+
+# Model saving/loading
+joblib
+
+# Flask web app
+flask
+
+# Optional: If you want to export metrics or handle CSV in API
+python-dateutil

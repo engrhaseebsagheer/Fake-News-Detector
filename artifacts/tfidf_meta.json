@@ -1,0 +1,94 @@
+{
+  "split": {
+    "train": 35715,
+    "val": 4464,
+    "test": 4465
+  },
+  "y_dist": {
+    "train": {
+      "0": 18746,
+      "1": 16969
+    },
+    "val": {
+      "0": 2343,
+      "1": 2121
+    },
+    "test": {
+      "0": 2344,
+      "1": 2121
+    }
+  },
+  "shapes": {
+    "X_train_word": [
+      35715,
+      50000
+    ],
+    "X_val_word": [
+      4464,
+      50000
+    ],
+    "X_test_word": [
+      4465,
+      50000
+    ],
+    "X_train_char": [
+      35715,
+      490227
+    ],
+    "X_val_char": [
+      4464,
+      490227
+    ],
+    "X_test_char": [
+      4465,
+      490227
+    ],
+    "X_train_combined": [
+      35715,
+      540227
+    ],
+    "X_val_combined": [
+      4464,
+      540227
+    ],
+    "X_test_combined": [
+      4465,
+      540227
+    ]
+  },
+  "word_vec": {
+    "ngram_range": [
+      1,
+      2
+    ],
+    "max_features": 50000,
+    "min_df": 2,
+    "max_df": 0.9,
+    "lowercase": false,
+    "dtype": "float32"
+  },
+  "char_vec": {
+    "analyzer": "char_wb",
+    "ngram_range": [
+      3,
+      5
+    ],
+    "min_df": 2,
+    "max_df": 0.9,
+    "lowercase": false,
+    "dtype": "float32"
+  },
+  "cleaning": {
+    "lowercase": true,
+    "remove_urls": true,
+    "remove_emails": true,
+    "normalize_spaces": true,
+    "lemmatize": false
+  },
+  "paths": {
+    "in": "/Users/haseebsagheer/Documents/Python Learning/Fake-News-Detector/Data/Processed/EDA_Processed_Data.csv",
+    "out_clean": "/Users/haseebsagheer/Documents/Python Learning/Fake-News-Detector/Data/Processed/NLP_Processed_Data.csv",
+    "artifacts_dir": "/Users/haseebsagheer/Documents/Python Learning/Fake-News-Detector/artifacts"
+  },
+  "random_state": 42
+}

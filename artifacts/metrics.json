@@ -1,0 +1,77 @@
+{
+  "split_sizes": {
+    "train": 28572,
+    "val": 7143,
+    "test": 8929
+  },
+  "val_results": [
+    {
+      "name": "LogReg",
+      "params": {
+        "C": 2.0,
+        "max_iter": 2000,
+        "solver": "liblinear",
+        "random_state": 42
+      },
+      "accuracy": 0.992580148397032,
+      "precision": 0.9900264007040188,
+      "recall": 0.9944018856806128,
+      "f1": 0.9922093194179039
+    },
+    {
+      "name": "LinearSVC",
+      "params": {
+        "C": 2.0,
+        "random_state": 42
+      },
+      "accuracy": 0.9965000699986001,
+      "precision": 0.9952955013231403,
+      "recall": 0.997348261638185,
+      "f1": 0.9963208241353937
+    },
+    {
+      "name": "CompNB",
+      "params": {
+        "alpha": 0.1
+      },
+      "accuracy": 0.9622007559848803,
+      "precision": 0.9559252772913018,
+      "recall": 0.9649381261048909,
+      "f1": 0.9604105571847508
+    }
+  ],
+  "best_val": {
+    "name": "LinearSVC",
+    "params": {
+      "C": 2.0,
+      "random_state": 42
+    },
+    "accuracy": 0.9965000699986001,
+    "precision": 0.9952955013231403,
+    "recall": 0.997348261638185,
+    "f1": 0.9963208241353937
+  },
+  "test": {
+    "name": "LinearSVC_TEST",
+    "params": {
+      "C": 2.0,
+      "random_state": 42
+    },
+    "accuracy": 0.996752155896517,
+    "precision": 0.9957637091080254,
+    "recall": 0.9974068835454974,
+    "f1": 0.9965846190083618
+  },
+  "tfidf_params": {
+    "ngram_range": [
+      1,
+      2
+    ],
+    "max_features": 50000,
+    "min_df": 2,
+    "max_df": 0.9,
+    "lowercase": false,
+    "dtype": "float32",
+    "sublinear_tf": true
+  }
+}
