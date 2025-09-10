@@ -20,7 +20,7 @@ As a Data Scientist in training, I wanted to create something that:
 - Tackles a real-world problem
 - Involves a full **end-to-end ML pipeline**
 - Challenges me beyond Jupyter Notebooks, pushing into **production deployment**
-- Strengthens my **Flask, API design, server administration, and ML deployment skills**
+- Strengthens my **FastAPI, API design, server administration, and ML deployment skills**
 
 This was also a way to **add a strong real-world AI project to my portfolio**, something that potential employers and clients can interact with live.
 
@@ -48,7 +48,7 @@ Each file has:
 
 ### **Backend**
 - Python 3.10
-- Flask (API and Web Interface)
+- FastAPI (API and Web Interface)
 - Gunicorn (WSGI application server)
 - Apache (Reverse Proxy + SSL)
 - Systemd (service manager for auto-start)
@@ -104,7 +104,7 @@ I started by loading both CSV files into pandas DataFrames and:
 
 ---
 
-### 4️⃣ **Building the Flask App**
+### 4️⃣ **Building the FastAPI App**
 The app has **two main components**:
 1. **Web UI** — user-friendly interface where users paste a news article
 2. **API Endpoint (`/predict`)** — accepts POST JSON requests and returns predictions
@@ -147,8 +147,8 @@ curl -X POST https://haseebsagheer.com/fake-news-detector/predict \
 
 ## ⚔️ Challenges I Overcame
 
-### Multiple Flask Apps on Same VPS
-My CV Generator was already deployed. Setting up a second Flask app without breaking the first required careful Apache and Gunicorn configuration.
+### Multiple FastAPI Apps on Same VPS
+My CV Generator was already deployed. Setting up a second FastAPI app without breaking the first required careful Apache and Gunicorn configuration.
 
 ### Apache Reverse Proxy Issues
 At first, the frontend got `SyntaxError: Unexpected token '<'...` errors.  
@@ -165,7 +165,7 @@ Configured HTTPS for secure API calls and avoided mixed-content errors in browse
 
 ## 📚 What I Learned
 - End-to-End ML Deployment — from data preprocessing to production API  
-- Flask Best Practices for building maintainable apps  
+- FastAPI Best Practices for building maintainable apps  
 - Gunicorn & Apache Reverse Proxy integration  
 - Linux Server Management — virtual environments, services, ports, logs  
 - Model Optimization for real-time predictions  
@@ -178,7 +178,7 @@ Configured HTTPS for secure API calls and avoided mixed-content errors in browse
 fake-news-detector/
 │
 ├── app/                   
-│   ├── app.py             # Flask app
+│   ├── app.py             # FastAPI app
 │   ├── templates/         # HTML UI
 │   ├── static/            # CSS files
 │
